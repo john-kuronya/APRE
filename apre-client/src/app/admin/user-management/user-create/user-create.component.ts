@@ -79,17 +79,20 @@ export class UserCreateComponent {
 
     console.log('New User', newUser);
 
-    this.http.post(`${environment.apiBaseUrl}/users`, {
-      user: newUser
-    }).subscribe({
-      next: (user) => {
-        console.log('User created', user);
-        this.router.navigate(['/user-management/users']);
-      },
-      error: (error) => {
-        console.error('Error creating user', error);
-        this.errorMessage = error.message;
-      }
+    this.http.post(`${environment.apiBaseUrl}/users`, { user: newUser }).subscribe({
+  next: (user) => {
+    console.log('User created', user);
+
+    // pass a flash message to the Users page
+    this.router.navigate(['/user-management/users'], {
+      state: { success: 'User created successfully!' }
     });
+  },
+  error: (error) => {
+    console.error('Error creating user', error);
+    this.errorMessage = error.message || 'An error occurred creating the user.';
+  }
+});
+
   }
 }

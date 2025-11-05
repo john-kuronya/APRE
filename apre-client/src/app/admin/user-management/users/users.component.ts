@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { environment } from '../../../../environments/environment';
 import { User } from '../user.interface';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router'; // ✅ added Router
 import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-dialog.component";
 
 @Component({
@@ -13,6 +13,10 @@ import { ConfirmDialogComponent } from "../../../shared/confirm-dialog/confirm-d
     <div>
       <h1>Users</h1>
       <a routerLink="/user-management/users/new" class="link button button--primary">Create User</a><br /><br />
+
+      @if (successMessage) { <!-- ✅ new success banner -->
+        <div class="message message--success">{{ successMessage }}</div>
+      }
 
       @if (deletionMessage) {
         <div class="message message--success">{{ deletionMessage }}</div>
@@ -54,15 +58,29 @@ export class UsersComponent {
   dialogHeader: string;
   dialogMessage: string;
   deletionMessage: string;
+  successMessage: string; // ✅ new property
   users: Array<User>;
   showConfirmDialog: boolean = false;
   userIdToDelete: string | null = null;
 
-  constructor(private http: HttpClient) {
+  constructor(private http: HttpClient, private router: Router) { // ✅ inject Router
     this.users = [];
     this.dialogHeader = '';
     this.dialogMessage = '';
     this.deletionMessage = '';
+    this.successMessage = ''; // ✅ init
+
+    // ✅ flash message from router state after creating a user
+    const nav = this.router.getCurrentNavigation();
+    const incoming =
+      (nav?.extras?.state as any)?.success ??
+      (history.state as any)?.success ??
+      null;
+
+    if (incoming) {
+      this.successMessage = incoming;
+      setTimeout(() => (this.successMessage = ''), 2000); // auto-hide
+    }
 
     this.http.get(`${environment.apiBaseUrl}/users`).subscribe({
       next: (users) => {
