@@ -17,8 +17,10 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
       <h1 class="confirm-dialog__title">{{ header }}</h1>
       <p class="confirm-dialog__message">{{ message }}</p>
       <div class="confirm-dialog__actions">
-        <button class="button button--primary" (click)="confirm(true)">Yes</button>
-        <button class="button button--secondary" (click)="confirm(false)">No</button>
+        <!--Confirm and Cancel tooltip added to buttons-->
+        <button class="button button--primary" title="Confirm action"
+        aria-label="Confirm action" (click)="confirm(true)">Yes</button>
+        <button class="button button--secondary" title="Cancel action" aria-label="Cancel action" (click)="confirm(false)">No</button>
       </div>
     </div>
   `,

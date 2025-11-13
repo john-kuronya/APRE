@@ -1,4 +1,10 @@
-// src/app/shared/services/sales.service.ts
+/**
+ * Author: John Kuronya
+ * Date: 10/27/2025
+ * File: sales.service.ts
+ * Description: Service for fetching sales data by salesperson
+ */
+
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';

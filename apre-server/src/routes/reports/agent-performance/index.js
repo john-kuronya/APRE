@@ -14,6 +14,41 @@ const createError = require('http-errors');
 const router = express.Router();
 
 /**
+ * Mock totals-by-year dataset (replace with Mongo/Mongoose later)
+ * Shape returned to the client: { labels: string[], data: number[] }
+ */
+const YEAR_TOTALS = {
+  2023: { labels: ['Q1','Q2','Q3','Q4'], data: [120,140,135,150] },
+  2024: { labels: ['Q1','Q2','Q3','Q4'], data: [160,155,170,180] },
+  2025: { labels: ['Q1','Q2','Q3','Q4'], data: [175,182,190,205] }
+};
+
+/**
+ * GET /by-year?year=2024
+ * Returns quarter labels and totals for the given year.
+ * Mounted at: /api/reports/agent-performance/by-year
+ */
+router.get('/by-year', (req, res, next) => {
+  try {
+    const y = (req.query.year || '').toString().trim();
+    const year = Number(y);
+
+    if (!y || Number.isNaN(year)) {
+      return next(createError(400, 'Missing or invalid ?year'));
+    }
+
+    const found = YEAR_TOTALS[year];
+    if (!found) {
+      return next(createError(404, 'No performance data for that year.'));
+    }
+
+    return res.json(found);
+  } catch (err) {
+    return next(err);
+  }
+});
+
+/**
  * @description
  *
  * GET /call-duration-by-date-range
@@ -21,9 +56,7 @@ const router = express.Router();
  * Fetches call duration data for agents within a specified date range.
  *
  * Example:
- * fetch('/call-duration-by-date-range?startDate=2023-01-01&endDate=2023-01-31')
- *  .then(response => response.json())
- *  .then(data => console.log(data));
+ * /call-duration-by-date-range?startDate=2023-01-01&endDate=2023-01-31
  */
 router.get('/call-duration-by-date-range', (req, res, next) => {
   try {
@@ -53,9 +86,7 @@ router.get('/call-duration-by-date-range', (req, res, next) => {
             as: 'agentDetails'
           }
         },
-        {
-          $unwind: '$agentDetails'
-        },
+        { $unwind: '$agentDetails' },
         {
           $group: {
             _id: '$agentDetails.name',
@@ -76,13 +107,7 @@ router.get('/call-duration-by-date-range', (req, res, next) => {
             callDurations: { $push: '$callDuration' }
           }
         },
-        {
-          $project: {
-            _id: 0,
-            agents: 1,
-            callDurations: 1
-          }
-        }
+        { $project: { _id: 0, agents: 1, callDurations: 1 } }
       ]).toArray();
 
       res.send(data);
