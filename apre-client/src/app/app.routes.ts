@@ -32,6 +32,7 @@ import { AgentPerformanceByYearComponent } from './reports/agent-performance/rep
 
 import { CustomerFeedbackComponent } from './reports/customer-feedback/customer-feedback.component';
 import { ChannelRatingByMonthComponent } from './reports/customer-feedback/channel-rating-by-month/channel-rating-by-month.component';
+import { CustomerFeedbackDataByMonthComponent } from './reports/customer-feedback/customer-feedback-data-by-month/customer-feedback-data-by-month.component';
 
 // --- User Management (children) ---
 export const userManagementRoutes: Routes = [
@@ -57,7 +58,8 @@ export const agentPerformanceRoutes: Routes = [
 
 // --- Customer Feedback (children) ---
 export const customerFeedbackRoutes: Routes = [
-  { path: 'channel-rating-by-month', component: ChannelRatingByMonthComponent }
+  { path: 'channel-rating-by-month', component: ChannelRatingByMonthComponent },
+  { path: 'customer-feedback-data-by-month', component: CustomerFeedbackDataByMonthComponent }
 ];
 
 // --- Root Routes ---
